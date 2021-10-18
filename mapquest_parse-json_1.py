@@ -4,12 +4,22 @@ import requests
 main_api = "https://www.mapquestapi.com/directions/v2/route?"
 key = "NRLPKMJTVAcKWAJ09be2HRfatstrDNbF"
 
+# convert miles
+def convert(miles, newUnit):
+    if (newUnit == "Kilometers"):
+        return miles * 1.61
+    if (newUnit == "Miles"):
+        return miles
+
 while True:
     orig = input("Starting location: ")
     if orig == "quit" or orig == "q":
         break
     dest = input("Destination: ")
     if dest == "quit" or dest == "q":
+        break
+    units = input("Preferred Units [Kilometers/Miles]: ")
+    if units == "quit" or units == "q":
         break
 
     url = main_api + urllib.parse.urlencode({"key": key, "from": orig, "to": dest})
@@ -27,7 +37,7 @@ while True:
         print("Fuel used (Ltr): " + str("{:.2f}".format((json_data["route"]["fuelUsed"])*3.78)))
         print("=============================================")
         for each in json_data["route"]["legs"][0]["maneuvers"]:
-            print((each["narrative"]) + " (" + str("{:.2f}".format((each["distance"])*1.61) + " km)"))
+            print((each["narrative"]) + " (" + str("{:.2f}".format(convert(each["distance"], units)) + " " + units.lower() + ")"))
         print("=============================================\n")
     
     elif json_status == 402:
